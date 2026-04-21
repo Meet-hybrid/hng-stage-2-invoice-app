@@ -1,3 +1,4 @@
+import { useMemo, useState } from "react";
 import { ChevronDown, Plus } from "lucide-react";
 import rawInvoices from "../data/data.json";
 import InvoiceCard from "../components/InvoiceCard";
@@ -9,6 +10,32 @@ const invoices = rawInvoices as Invoice[];
 function InvoiceListPage() {
   const { theme } = useTheme();
   const isDark = theme === "dark";
+
+  const [showFilters, setShowFilters] = useState(false);
+
+  const [selectedStatuses, setSelectedStatuses] = useState<string[]>([]);
+
+  function toggleStatus(status: string) {
+    setSelectedStatuses((currentStatuses) => {
+      if (currentStatuses.includes(status)) {
+        return currentStatuses.filter(
+          (currentStatus) => currentStatus !== status,
+        );
+      }
+
+      return [...currentStatuses, status];
+    });
+  }
+
+  const filteredInvoices = useMemo(() => {
+    if (selectedStatuses.length === 0) {
+      return invoices;
+    }
+
+    return invoices.filter((invoice) =>
+      selectedStatuses.includes(invoice.status),
+    );
+  }, [selectedStatuses]);
 
   return (
     <section className="mx-auto w-full max-w-182.5">
@@ -27,20 +54,56 @@ function InvoiceListPage() {
               isDark ? "text-[#DFE3FA]" : "text-[#888EB0]"
             }`}
           >
-            There are {invoices.length} total invoices
+            There are {filteredInvoices.length} total invoices
           </p>
         </div>
 
         <div className="flex items-center gap-5 self-start md:self-auto">
-          <button
-            type="button"
-            className={`flex items-center gap-3 text-sm font-bold transition ${
-              isDark ? "text-white" : "text-[#0C0E16]"
-            }`}
-          >
-            <span>Filter by status</span>
-            <ChevronDown size={18} className="text-[#7C5DFA]" />
-          </button>
+          <div className="relative">
+            <button
+              type="button"
+              onClick={() => setShowFilters((current) => !current)}
+              className={`flex items-center gap-3 text-sm font-bold transition cursor-pointer ${
+                isDark ? "text-white" : "text-[#0C0E16]"
+              }`}
+            >
+              <span>Filter by status</span>
+
+              <ChevronDown
+                size={18}
+                className={`text-[#7C5DFA] transition-transform duration-300 ${
+                  showFilters ? "rotate-180" : ""
+                }`}
+              />
+            </button>
+
+            {showFilters && (
+              <div
+                className={`absolute right-0 top-14 z-20 w-48 rounded-lg px-6 py-6 shadow-[0_10px_20px_rgba(72,84,159,0.25)] ${
+                  isDark ? "bg-[#252945]" : "bg-white"
+                }`}
+              >
+                <div className="space-y-4">
+                  {["draft", "pending", "paid"].map((status) => (
+                    <label
+                      key={status}
+                      className={`flex cursor-pointer items-center gap-3 text-[15px] font-bold capitalize ${
+                        isDark ? "text-white" : "text-[#0C0E16]"
+                      }`}
+                    >
+                      <input
+                        type="checkbox"
+                        checked={selectedStatuses.includes(status)}
+                        onChange={() => toggleStatus(status)}
+                        className="h-4 w-4 accent-[#7C5DFA]"
+                      />
+                      {status}
+                    </label>
+                  ))}
+                </div>
+              </div>
+            )}
+          </div>
 
           <button
             type="button"
@@ -55,9 +118,39 @@ function InvoiceListPage() {
       </div>
 
       <div className="mt-8 space-y-4">
-        {invoices.map((invoice) => (
+        {filteredInvoices.map((invoice) => (
           <InvoiceCard key={invoice.id} invoice={invoice} />
         ))}
+      </div>
+
+      <div className="mt-8 space-y-4">
+        {filteredInvoices.length > 0 ? (
+          filteredInvoices.map((invoice) => (
+            <InvoiceCard key={invoice.id} invoice={invoice} />
+          ))
+        ) : (
+          <div
+            className={`rounded-lg px-6 py-16 text-center ${
+              isDark ? "bg-[#1E2139]" : "bg-white"
+            }`}
+          >
+            <h2
+              className={`text-xl font-bold ${
+                isDark ? "text-white" : "text-[#0C0E16]"
+              }`}
+            >
+              No invoices found
+            </h2>
+
+            <p
+              className={`mt-3 text-sm ${
+                isDark ? "text-[#DFE3FA]" : "text-[#888EB0]"
+              }`}
+            >
+              Try selecting a different status filter.
+            </p>
+          </div>
+        )}
       </div>
     </section>
   );
