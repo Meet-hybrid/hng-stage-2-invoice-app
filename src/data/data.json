@@ -1,0 +1,41 @@
+[
+  {
+    "id": "RT3080",
+    "createdAt": "2026-04-20",
+    "paymentDue": "2026-05-19",
+    "description": "Website Design",
+    "paymentTerms": 30,
+    "clientName": "Jensen Huang",
+    "clientEmail": "jensen@example.com",
+    "status": "pending",
+    "senderAddress": {
+      "street": "19 Union Terrace",
+      "city": "London",
+      "postCode": "E1 3EZ",
+      "country": "United Kingdom"
+    },
+    "clientAddress": {
+      "street": "84 Church Way",
+      "city": "Bradford",
+      "postCode": "BD1 9PB",
+      "country": "United Kingdom"
+    },
+    "items": [
+      {
+        "id": "1",
+        "name": "Landing Page Design",
+        "quantity": 1,
+        "price": 1800,
+        "total": 1800
+      },
+      {
+        "id": "2",
+        "name": "Mobile Responsiveness",
+        "quantity": 1,
+        "price": 400,
+        "total": 400
+      }
+    ],
+    "total": 2200
+  }
+]
