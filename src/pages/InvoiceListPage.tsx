@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { ChevronDown, Plus } from "lucide-react";
 import rawInvoices from "../data/data.json";
 import InvoiceCard from "../components/InvoiceCard";
@@ -12,8 +12,9 @@ function InvoiceListPage() {
   const isDark = theme === "dark";
 
   const [showFilters, setShowFilters] = useState(false);
-
   const [selectedStatuses, setSelectedStatuses] = useState<string[]>([]);
+
+  const filterRef = useRef<HTMLDivElement | null>(null);
 
   function toggleStatus(status: string) {
     setSelectedStatuses((currentStatuses) => {
@@ -37,6 +38,31 @@ function InvoiceListPage() {
     );
   }, [selectedStatuses]);
 
+  useEffect(() => {
+    function handleClickOutside(event: MouseEvent) {
+      if (
+        filterRef.current &&
+        !filterRef.current.contains(event.target as Node)
+      ) {
+        setShowFilters(false);
+      }
+    }
+
+    function handleEscape(event: KeyboardEvent) {
+      if (event.key === "Escape") {
+        setShowFilters(false);
+      }
+    }
+
+    document.addEventListener("mousedown", handleClickOutside);
+    document.addEventListener("keydown", handleEscape);
+
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+      document.removeEventListener("keydown", handleEscape);
+    };
+  }, []);
+
   return (
     <section className="mx-auto w-full max-w-182.5">
       <div className="flex flex-col gap-6 md:flex-row md:items-center md:justify-between">
@@ -59,7 +85,7 @@ function InvoiceListPage() {
         </div>
 
         <div className="flex items-center gap-5 self-start md:self-auto">
-          <div className="relative">
+          <div className="relative" ref={filterRef}>
             <button
               type="button"
               onClick={() => setShowFilters((current) => !current)}
@@ -79,7 +105,7 @@ function InvoiceListPage() {
 
             {showFilters && (
               <div
-                className={`absolute right-0 top-14 z-20 w-48 rounded-lg px-6 py-6 shadow-[0_10px_20px_rgba(72,84,159,0.25)] ${
+                className={`absolute right-0 top-9 z-20 w-48 rounded-lg px-6 py-6 shadow-[0_10px_20px_rgba(72,84,159,0.25)] ${
                   isDark ? "bg-[#252945]" : "bg-white"
                 }`}
               >
@@ -94,7 +120,9 @@ function InvoiceListPage() {
                       <input
                         type="checkbox"
                         checked={selectedStatuses.includes(status)}
-                        onChange={() => toggleStatus(status)}
+                        onChange={() => {
+                          toggleStatus(status);
+                        }}
                         className="h-4 w-4 accent-[#7C5DFA]"
                       />
                       {status}
