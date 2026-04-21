@@ -16,7 +16,7 @@ function InvoiceDetailPage() {
 
   if (!invoice) {
     return (
-      <section className="mx-auto w-full max-w-182.5">
+      <section className="mx-auto w-full max-w-182.5 pb-24 md:pb-0">
         <Link
           to="/"
           className={`inline-flex items-center gap-4 text-[15px] font-bold ${
@@ -66,12 +66,12 @@ function InvoiceDetailPage() {
           <StatusBadge status={invoice.status} />
         </div>
 
-        <div className="flex flex-wrap gap-2 md:gap-3">
+        <div className="hidden md:flex md:flex-wrap md:gap-3">
           <button
             type="button"
             className={`rounded-full px-6 py-4 text-[15px] font-bold transition ${
               isDark
-                ? "bg-[#252945] text-[#DFE3FA] hover:bg-[#FFFFFF]"
+                ? "bg-[#252945] text-[#DFE3FA] hover:bg-white hover:text-[#7E88C3]"
                 : "bg-[#F9FAFE] text-[#7E88C3] hover:bg-[#DFE3FA]"
             }`}
           >
@@ -262,6 +262,37 @@ function InvoiceDetailPage() {
             </p>
           </div>
         </div>
+      </div>
+
+      <div
+        className={`mt-14 flex items-center justify-center gap-2 rounded-t-lg px-6 py-6 md:hidden ${
+          isDark ? "bg-[#1E2139]" : "bg-white"
+        }`}
+      >
+        <button
+          type="button"
+          className={`rounded-full px-6 py-4 text-[15px] font-bold transition ${
+            isDark
+              ? "bg-[#252945] text-[#DFE3FA] hover:bg-white hover:text-[#7E88C3]"
+              : "bg-[#F9FAFE] text-[#7E88C3] hover:bg-[#DFE3FA]"
+          }`}
+        >
+          Edit
+        </button>
+
+        <button
+          type="button"
+          className="rounded-full bg-[#EC5757] px-6 py-4 text-[15px] font-bold text-white transition hover:bg-[#FF9797]"
+        >
+          Delete
+        </button>
+
+        <button
+          type="button"
+          className="rounded-full bg-[#7C5DFA] px-6 py-4 text-[15px] font-bold text-white transition hover:bg-[#9277FF]"
+        >
+          Mark as Paid
+        </button>
       </div>
     </section>
   );
