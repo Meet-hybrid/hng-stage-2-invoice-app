@@ -1,30 +1,29 @@
-import invoices from "../data/data.json";
+import rawInvoices from "../data/data.json";
+import InvoiceCard from "../components/InvoiceCard";
+import type { Invoice } from "../types/invoice";
+
+const invoices = rawInvoices as Invoice[];
 
 function InvoiceListPage() {
   return (
     <section className="p-6">
-      <h1 className="text-2xl font-bold">Invoices</h1>
+      <div className="flex items-center justify-between">
+        <div>
+          <h1 className="text-3xl font-bold text-gray-900">Invoices</h1>
 
-      <div className="mt-6 space-y-4">
+          <p className="mt-2 text-sm text-gray-500">
+            There are {invoices.length} total invoices
+          </p>
+        </div>
+
+        <button className="rounded-full bg-violet-600 px-5 py-3 text-sm font-semibold text-white transition hover:bg-violet-500">
+          New Invoice
+        </button>
+      </div>
+
+      <div className="mt-8 space-y-4">
         {invoices.map((invoice) => (
-          <article
-            key={invoice.id}
-            className="rounded-xl border border-gray-200 p-4 shadow-sm"
-          >
-            <h2 className="text-lg font-semibold">{invoice.id}</h2>
-
-            <p className="mt-2 text-sm text-gray-600">
-              Client: {invoice.clientName}
-            </p>
-
-            <p className="mt-2 text-sm text-gray-600">
-              Total: £{invoice.total}
-            </p>
-
-            <p className="mt-2 text-sm text-gray-600">
-              Status: {invoice.status}
-            </p>
-          </article>
+          <InvoiceCard key={invoice.id} invoice={invoice} />
         ))}
       </div>
     </section>
