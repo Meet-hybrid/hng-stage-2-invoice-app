@@ -1,6 +1,9 @@
 import { Moon } from "lucide-react";
+import { useTheme } from "../hooks/useTheme";
 
 function MobileNavbar() {
+  const { toggleTheme } = useTheme();
+
   return (
     <header className="flex h-18 items-center justify-between bg-[#373B53] lg:hidden">
       <div className="relative flex h-full w-18 items-center justify-center overflow-hidden rounded-r-[20px] bg-[#7C5DFA]">
@@ -14,8 +17,9 @@ function MobileNavbar() {
       <div className="flex h-full items-center">
         <button
           type="button"
+          onClick={toggleTheme}
           aria-label="Toggle theme"
-          className="flex h-full items-center justify-center px-6 text-[#858BB2] transition hover:text-white"
+          className="flex h-full items-center justify-center px-6 text-[#7E88C3] transition hover:text-white"
         >
           <Moon size={20} fill="currentColor" strokeWidth={0} />
         </button>

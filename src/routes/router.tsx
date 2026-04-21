@@ -1,9 +1,9 @@
-import { createBrowserRouter, RouterProvider } from "react-router-dom";
+import { createBrowserRouter } from "react-router-dom";
 import AppLayout from "../layout/AppLayout";
 import InvoiceDetailPage from "../pages/InvoiceDetailPage";
 import InvoiceListPage from "../pages/InvoiceListPage";
 
-const router = createBrowserRouter([
+export const router = createBrowserRouter([
   {
     path: "/",
     element: <AppLayout />,
@@ -19,9 +19,3 @@ const router = createBrowserRouter([
     ],
   },
 ]);
-
-function AppRouter() {
-  return <RouterProvider router={router} />;
-}
-
-export default AppRouter;
