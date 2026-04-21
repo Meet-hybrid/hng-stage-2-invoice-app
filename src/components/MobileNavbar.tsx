@@ -1,16 +1,32 @@
+import { Moon } from "lucide-react";
+
 function MobileNavbar() {
   return (
-    <header className="flex items-center justify-between bg-[#373B53] px-6 py-4 lg:hidden">
-      <div className="flex h-12 w-12 items-center justify-center rounded-r-2xl bg-violet-600">
-        <div className="h-6 w-6 rounded-full bg-white/20" />
+    <header className="flex h-18 items-center justify-between bg-[#373B53] lg:hidden">
+      <div className="relative flex h-full w-18 items-center justify-center overflow-hidden rounded-r-[20px] bg-[#7C5DFA]">
+        <div className="absolute bottom-0 left-0 right-0 h-1/2 rounded-tl-[20px] bg-[#9277FF]" />
+
+        <div className="relative h-7 w-7 rounded-full bg-white">
+          <div className="absolute left-1/2 top-0 h-3.5 w-3.5 -translate-x-1/2 -translate-y-1/2 rotate-45 bg-[#7C5DFA]" />
+        </div>
       </div>
 
-      <div className="flex items-center gap-4">
-        <button className="text-sm text-white transition hover:text-violet-300">
-          Theme
+      <div className="flex h-full items-center">
+        <button
+          type="button"
+          aria-label="Toggle theme"
+          className="flex h-full items-center justify-center px-6 text-[#858BB2] transition hover:text-white"
+        >
+          <Moon size={20} fill="currentColor" strokeWidth={0} />
         </button>
 
-        <div className="h-10 w-10 rounded-full bg-gray-300" />
+        <div className="flex h-full items-center justify-center border-l border-[#494E6E] px-6">
+          <img
+            src="https://i.pravatar.cc/40?img=12"
+            alt="User avatar"
+            className="h-8 w-8 rounded-full"
+          />
+        </div>
       </div>
     </header>
   );

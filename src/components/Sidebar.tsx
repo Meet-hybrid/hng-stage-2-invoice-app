@@ -1,16 +1,32 @@
+import { Moon } from "lucide-react";
+
 function Sidebar() {
   return (
-    <aside className="hidden w-28 flex-col justify-between rounded-r-3xl bg-[#373B53] lg:flex">
-      <div className="flex h-28 items-center justify-center rounded-r-3xl bg-violet-600">
-        <div className="h-10 w-10 rounded-full bg-white/20" />
+    <aside className="hidden h-screen w-25.75 flex-col justify-between bg-[#373B53] lg:flex">
+      <div className="relative flex h-25.75 items-center justify-center overflow-hidden rounded-r-[20px] bg-[#7C5DFA]">
+        <div className="absolute bottom-0 left-0 right-0 h-1/2 rounded-tl-[20px] bg-[#9277FF]" />
+
+        <div className="relative h-12 w-12 rounded-full bg-white">
+          <div className="absolute left-1/2 top-0 h-6 w-6 -translate-x-1/2 -translate-y-1/2 rotate-45 bg-[#7C5DFA]" />
+        </div>
       </div>
 
-      <div className="flex flex-col items-center gap-6 border-t border-[#494E6E] py-6">
-        <button className="text-sm text-white transition hover:text-violet-300">
-          Theme
+      <div className="mt-auto flex flex-col items-center">
+        <button
+          type="button"
+          aria-label="Toggle theme"
+          className="flex h-22 w-full items-center justify-center text-[#858BB2] transition hover:text-white"
+        >
+          <Moon size={20} fill="currentColor" strokeWidth={0} />
         </button>
 
-        <div className="h-10 w-10 rounded-full bg-gray-300" />
+        <div className="flex h-22 w-full items-center justify-center border-t border-[#494E6E]">
+          <img
+            src="https://i.pravatar.cc/40?img=12"
+            alt="User avatar"
+            className="h-10 w-10 rounded-full"
+          />
+        </div>
       </div>
     </aside>
   );
