@@ -4,6 +4,7 @@ import rawInvoices from "../data/data.json";
 import StatusBadge from "../components/StatusBadge";
 import { useTheme } from "../hooks/useTheme";
 import type { Invoice } from "../types/invoice";
+import { formatCurrency } from "../utils/formatCurrency";
 
 const invoices = rawInvoices as Invoice[];
 
@@ -228,7 +229,7 @@ function InvoiceDetailPage() {
                   </p>
 
                   <p className="mt-2 text-[13px] font-bold text-[#7E88C3] md:hidden">
-                    {item.quantity} x £ {item.price.toFixed(2)}
+                    {item.quantity} x {formatCurrency(item.price)}
                   </p>
                 </div>
 
@@ -237,7 +238,7 @@ function InvoiceDetailPage() {
                 </p>
 
                 <p className="hidden text-right text-[15px] font-bold text-[#7E88C3] md:block">
-                  £ {item.price.toFixed(2)}
+                  {formatCurrency(item.price)}
                 </p>
 
                 <p
@@ -245,7 +246,7 @@ function InvoiceDetailPage() {
                     isDark ? "text-white" : "text-[#0C0E16]"
                   }`}
                 >
-                  £ {item.total.toFixed(2)}
+                  {formatCurrency(item.total)}
                 </p>
               </div>
             ))}
@@ -258,7 +259,7 @@ function InvoiceDetailPage() {
           >
             <p className="text-[13px] font-medium text-white">Amount Due</p>
             <p className="text-2xl font-bold tracking-[-0.5px] text-white md:text-[32px]">
-              £ {invoice.total.toFixed(2)}
+              {formatCurrency(invoice.total)}
             </p>
           </div>
         </div>
