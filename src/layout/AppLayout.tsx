@@ -10,7 +10,7 @@ function AppLayout() {
       <div className="flex-1">
         <MobileNavbar />
 
-        <main className="mx-auto max-w-6xl px-6 py-8 lg:px-12 lg:py-16">
+        <main className="w-full px-6 py-8 lg:px-10 lg:py-16">
           <Outlet />
         </main>
       </div>
