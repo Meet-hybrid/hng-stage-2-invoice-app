@@ -1,36 +1,42 @@
 import { useTheme } from "../hooks/useTheme";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
+import { useInvoices } from "../hooks/useInvoices";
 
 interface InvoiceFormDrawerProps {
   isOpen: boolean;
   onClose: () => void;
 }
 
+const initialFormData = {
+  senderStreet: "",
+  senderCity: "",
+  senderPostCode: "",
+  senderCountry: "",
+  clientName: "",
+  clientEmail: "",
+  clientStreet: "",
+  clientCity: "",
+  clientPostCode: "",
+  clientCountry: "",
+  invoiceDate: "",
+  paymentTerms: "30",
+  projectDescription: "",
+};
+
+const initialItemData = {
+  name: "",
+  quantity: 1,
+  price: 0,
+};
+
 function InvoiceFormDrawer({ isOpen, onClose }: InvoiceFormDrawerProps) {
   const { theme } = useTheme();
   const isDark = theme === "dark";
 
-  const [formData, setFormData] = useState({
-    senderStreet: "",
-    senderCity: "",
-    senderPostCode: "",
-    senderCountry: "",
-    clientName: "",
-    clientEmail: "",
-    clientStreet: "",
-    clientCity: "",
-    clientPostCode: "",
-    clientCountry: "",
-    invoiceDate: "",
-    paymentTerms: "Net 30 Days",
-    projectDescription: "",
-  });
+  const { createInvoice } = useInvoices();
 
-  const [itemData, setItemData] = useState({
-    name: "",
-    quantity: 1,
-    price: 0,
-  });
+  const [formData, setFormData] = useState(initialFormData);
+  const [itemData, setItemData] = useState(initialItemData);
 
   const itemTotal = useMemo(() => {
     return itemData.quantity * itemData.price;
@@ -38,7 +44,61 @@ function InvoiceFormDrawer({ isOpen, onClose }: InvoiceFormDrawerProps) {
 
   const [errors, setErrors] = useState<Record<string, string>>({});
 
+  useEffect(() => {
+    function handleEscape(event: KeyboardEvent) {
+      if (event.key === "Escape") {
+        onClose();
+      }
+    }
+
+    window.addEventListener("keydown", handleEscape);
+
+    return () => {
+      window.removeEventListener("keydown", handleEscape);
+    };
+  }, [onClose]);
+
   if (!isOpen) return null;
+
+  function buildInvoice(status: "draft" | "pending") {
+    const invoiceDate = new Date(formData.invoiceDate);
+    const paymentTerms = Number(formData.paymentTerms);
+
+    const paymentDue = new Date(invoiceDate);
+    paymentDue.setDate(paymentDue.getDate() + paymentTerms);
+
+    return {
+      createdAt: formData.invoiceDate,
+      paymentDue: paymentDue.toISOString().split("T")[0],
+      description: formData.projectDescription,
+      paymentTerms,
+      clientName: formData.clientName,
+      clientEmail: formData.clientEmail,
+      status,
+      senderAddress: {
+        street: formData.senderStreet,
+        city: formData.senderCity,
+        postCode: formData.senderPostCode,
+        country: formData.senderCountry,
+      },
+      clientAddress: {
+        street: formData.clientStreet,
+        city: formData.clientCity,
+        postCode: formData.clientPostCode,
+        country: formData.clientCountry,
+      },
+      items: [
+        {
+          id: crypto.randomUUID(),
+          name: itemData.name,
+          quantity: itemData.quantity,
+          price: itemData.price,
+          total: itemTotal,
+        },
+      ],
+      total: itemTotal,
+    };
+  }
 
   function handleInputChange(
     event: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>,
@@ -72,29 +132,14 @@ function InvoiceFormDrawer({ isOpen, onClose }: InvoiceFormDrawerProps) {
   }
 
   function handleDiscard() {
-    setFormData({
-      senderStreet: "",
-      senderCity: "",
-      senderPostCode: "",
-      senderCountry: "",
-      clientName: "",
-      clientEmail: "",
-      clientStreet: "",
-      clientCity: "",
-      clientPostCode: "",
-      clientCountry: "",
-      invoiceDate: "",
-      paymentTerms: "Net 30 Days",
-      projectDescription: "",
-    });
-
-    setItemData({
-      name: "",
-      quantity: 1,
-      price: 0,
-    });
-
+    resetForm();
     onClose();
+  }
+
+  function resetForm() {
+    setFormData(initialFormData);
+    setItemData(initialItemData);
+    setErrors({});
   }
 
   function handleSaveAsDraft() {
@@ -102,7 +147,10 @@ function InvoiceFormDrawer({ isOpen, onClose }: InvoiceFormDrawerProps) {
 
     if (!isFormValid) return;
 
-    console.log("Save as draft", { formData, itemData, itemTotal });
+    const newInvoice = buildInvoice("draft");
+    createInvoice(newInvoice);
+    resetForm();
+    onClose();
   }
 
   function handleSaveAndSend() {
@@ -110,7 +158,10 @@ function InvoiceFormDrawer({ isOpen, onClose }: InvoiceFormDrawerProps) {
 
     if (!isFormValid) return;
 
-    console.log("Save and send", { formData, itemData, itemTotal });
+    const newInvoice = buildInvoice("pending");
+    createInvoice(newInvoice);
+    resetForm();
+    onClose();
   }
 
   function isValidEmail(email: string) {
@@ -477,16 +528,16 @@ function InvoiceFormDrawer({ isOpen, onClose }: InvoiceFormDrawerProps) {
                   value={formData.invoiceDate}
                   onChange={handleInputChange}
                   className={`h-12 w-full rounded-md border px-5 text-[15px] font-bold outline-none transition ${
-                    errors.invoiceData
+                    errors.invoiceDate
                       ? "border-[#EC5757]"
                       : isDark
                         ? "border-[#252945] bg-[#1E2139] text-white"
                         : "border-[#DFE3FA] bg-white text-[#0C0E16]"
                   }`}
                 />
-                {errors.invoiceData && (
+                {errors.invoiceDate && (
                   <p className="mt-2 text-[13px] font-medium text-[#EC5757]">
-                    {errors.invoiceData}
+                    {errors.invoiceDate}
                   </p>
                 )}
               </div>
@@ -511,10 +562,10 @@ function InvoiceFormDrawer({ isOpen, onClose }: InvoiceFormDrawerProps) {
                       : "border-[#DFE3FA] bg-white text-[#0C0E16]"
                   }`}
                 >
-                  <option>Net 1 Day</option>
-                  <option>Net 7 Days</option>
-                  <option>Net 14 Days</option>
-                  <option>Net 30 Days</option>
+                  <option value="1">Net 1 Day</option>
+                  <option value="7">Net 7 Days</option>
+                  <option value="14">Net 14 Days</option>
+                  <option value="30">Net 30 Days</option>
                 </select>
               </div>
             </div>
@@ -553,7 +604,7 @@ function InvoiceFormDrawer({ isOpen, onClose }: InvoiceFormDrawerProps) {
           <div className="space-y-6">
             <h3 className="text-lg font-bold text-[#777F98]">Item List</h3>
 
-            <div className="hidden grid-cols-[1.8fr_0.7fr_1fr_1fr] gap-4 md:grid">
+            <div className="hidden grid-cols-[minmax(0,1fr)_64px_100px_100px_24px] items-center gap-4 md:grid">
               <p className="text-[13px] font-medium text-[#7E88C3]">
                 Item Name
               </p>
@@ -563,7 +614,7 @@ function InvoiceFormDrawer({ isOpen, onClose }: InvoiceFormDrawerProps) {
             </div>
 
             <div className="space-y-4">
-              <div className="grid grid-cols-1 gap-4 md:grid-cols-[1.8fr_0.7fr_1fr_1fr]">
+              <div className="mt-4 grid grid-cols-1 gap-4 md:grid-cols-[minmax(0,1fr)_64px_100px_100px_24px] items-center">
                 <input
                   name="name"
                   type="text"

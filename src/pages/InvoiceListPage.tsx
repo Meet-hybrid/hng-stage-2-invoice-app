@@ -1,16 +1,15 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { ChevronDown, Plus } from "lucide-react";
-import rawInvoices from "../data/data.json";
 import InvoiceCard from "../components/InvoiceCard";
 import { useTheme } from "../hooks/useTheme";
-import type { Invoice } from "../types/invoice";
 import InvoiceFormDrawer from "../components/InvoiceFormDrawer";
-
-const invoices = rawInvoices as Invoice[];
+import { useInvoices } from "../hooks/useInvoices";
 
 function InvoiceListPage() {
   const { theme } = useTheme();
   const isDark = theme === "dark";
+
+  const { invoices } = useInvoices();
 
   const [showFilters, setShowFilters] = useState(false);
   const [selectedStatuses, setSelectedStatuses] = useState<string[]>([]);
@@ -39,7 +38,7 @@ function InvoiceListPage() {
     return invoices.filter((invoice) =>
       selectedStatuses.includes(invoice.status),
     );
-  }, [selectedStatuses]);
+  }, [selectedStatuses, invoices]);
 
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
@@ -147,12 +146,6 @@ function InvoiceListPage() {
             <span>New Invoice</span>
           </button>
         </div>
-      </div>
-
-      <div className="mt-8 space-y-4">
-        {filteredInvoices.map((invoice) => (
-          <InvoiceCard key={invoice.id} invoice={invoice} />
-        ))}
       </div>
 
       <div className="mt-8 space-y-4">

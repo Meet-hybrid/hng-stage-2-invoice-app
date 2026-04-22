@@ -7,11 +7,14 @@ import { RouterProvider } from "react-router-dom";
 import "./index.css";
 import { ThemeProvider } from "./context/ThemeContext";
 import { router } from "./routes/router";
+import { InvoiceProvider } from "./context/InvoiceContext";
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
     <ThemeProvider>
-      <RouterProvider router={router} />
+      <InvoiceProvider>
+        <RouterProvider router={router} />
+      </InvoiceProvider>
     </ThemeProvider>
   </StrictMode>,
 );
