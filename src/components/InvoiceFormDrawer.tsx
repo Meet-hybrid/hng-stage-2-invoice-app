@@ -36,6 +36,8 @@ function InvoiceFormDrawer({ isOpen, onClose }: InvoiceFormDrawerProps) {
     return itemData.quantity * itemData.price;
   }, [itemData.quantity, itemData.price]);
 
+  const [errors, setErrors] = useState<Record<string, string>>({});
+
   if (!isOpen) return null;
 
   function handleInputChange(
@@ -47,6 +49,12 @@ function InvoiceFormDrawer({ isOpen, onClose }: InvoiceFormDrawerProps) {
       ...currentData,
       [name]: value,
     }));
+
+    // clear the error for a specific field so the message goes away
+    setErrors((currentErrors) => ({
+      ...currentErrors,
+      [name]: "",
+    }));
   }
 
   function handleItemChange(event: React.ChangeEvent<HTMLInputElement>) {
@@ -55,6 +63,11 @@ function InvoiceFormDrawer({ isOpen, onClose }: InvoiceFormDrawerProps) {
     setItemData((currentItem) => ({
       ...currentItem,
       [name]: name === "quantity" || name === "price" ? Number(value) : value,
+    }));
+
+    setErrors((currentErrors) => ({
+      ...currentErrors,
+      [name === "name" ? "itemName" : name]: "",
     }));
   }
 
@@ -82,6 +95,72 @@ function InvoiceFormDrawer({ isOpen, onClose }: InvoiceFormDrawerProps) {
     });
 
     onClose();
+  }
+
+  function handleSaveAsDraft() {
+    const isFormValid = validateForm();
+
+    if (!isFormValid) return;
+
+    console.log("Save as draft", { formData, itemData, itemTotal });
+  }
+
+  function handleSaveAndSend() {
+    const isFormValid = validateForm();
+
+    if (!isFormValid) return;
+
+    console.log("Save and send", { formData, itemData, itemTotal });
+  }
+
+  function isValidEmail(email: string) {
+    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+  }
+
+  function validateForm() {
+    const newErrors: Record<string, string> = {};
+
+    if (!formData.senderStreet.trim()) {
+      newErrors.senderStreet = "Street address is required";
+    }
+
+    if (!formData.clientName.trim()) {
+      newErrors.clientName = "Client's name is required";
+    }
+
+    if (!formData.clientEmail.trim()) {
+      newErrors.clientEmail = "Client's email is required";
+    } else if (!isValidEmail(formData.clientEmail)) {
+      newErrors.clientEmail = "Please enter a valid email";
+    }
+
+    if (!formData.clientStreet.trim()) {
+      newErrors.clientStreet = "Street address is required";
+    }
+
+    if (!formData.invoiceDate) {
+      newErrors.invoiceDate = "Invoice date is required";
+    }
+
+    if (!formData.projectDescription.trim()) {
+      newErrors.projectDescription = "Project description is required";
+    }
+
+    if (!itemData.name.trim()) {
+      newErrors.itemName = "Item name is required";
+    }
+
+    if (itemData.quantity <= 0) {
+      newErrors.quantity = "Quantity must be greater than 0";
+    }
+
+    if (itemData.price <= 0) {
+      newErrors.price = "Price must be greater than 0";
+    }
+
+    setErrors(newErrors);
+
+    return Object.keys(newErrors).length === 0;
   }
 
   return (
@@ -126,11 +205,18 @@ function InvoiceFormDrawer({ isOpen, onClose }: InvoiceFormDrawerProps) {
                   value={formData.senderStreet}
                   onChange={handleInputChange}
                   className={`h-12 w-full rounded-md border px-5 text-[15px] font-bold outline-none transition ${
-                    isDark
-                      ? "border-[#252945] bg-[#1E2139] text-white"
-                      : "border-[#DFE3FA] bg-white text-[#0C0E16]"
+                    errors.senderStreet
+                      ? "border-[#EC5757]"
+                      : isDark
+                        ? "border-[#252945] bg-[#1E2139] text-white"
+                        : "border-[#DFE3FA] bg-white text-[#0C0E16]"
                   }`}
                 />
+                {errors.senderStreet && (
+                  <p className="mt-2 text-[13px] font-medium text-[#EC5757]">
+                    {errors.senderStreet}
+                  </p>
+                )}
               </div>
 
               <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
@@ -226,11 +312,18 @@ function InvoiceFormDrawer({ isOpen, onClose }: InvoiceFormDrawerProps) {
                   value={formData.clientName}
                   onChange={handleInputChange}
                   className={`h-12 w-full rounded-md border px-5 text-[15px] font-bold outline-none transition ${
-                    isDark
-                      ? "border-[#252945] bg-[#1E2139] text-white"
-                      : "border-[#DFE3FA] bg-white text-[#0C0E16]"
+                    errors.clientName
+                      ? "border-[#EC5757]"
+                      : isDark
+                        ? "border-[#252945] bg-[#1E2139] text-white"
+                        : "border-[#DFE3FA] bg-white text-[#0C0E16]"
                   }`}
                 />
+                {errors.clientName && (
+                  <p className="mt-2 text-[13px] font-medium text-[#EC5757]">
+                    {errors.clientName}
+                  </p>
+                )}
               </div>
 
               <div>
@@ -249,11 +342,18 @@ function InvoiceFormDrawer({ isOpen, onClose }: InvoiceFormDrawerProps) {
                   value={formData.clientEmail}
                   onChange={handleInputChange}
                   className={`h-12 w-full rounded-md border px-5 text-[15px] font-bold outline-none transition ${
-                    isDark
-                      ? "border-[#252945] bg-[#1E2139] text-white"
-                      : "border-[#DFE3FA] bg-white text-[#0C0E16]"
+                    errors.clientEmail
+                      ? "border-[#EC5757]"
+                      : isDark
+                        ? "border-[#252945] bg-[#1E2139] text-white"
+                        : "border-[#DFE3FA] bg-white text-[#0C0E16]"
                   }`}
                 />
+                {errors.clientEmail && (
+                  <p className="mt-2 text-[13px] font-medium text-[#EC5757]">
+                    {errors.clientEmail}
+                  </p>
+                )}
               </div>
 
               <div>
@@ -272,11 +372,18 @@ function InvoiceFormDrawer({ isOpen, onClose }: InvoiceFormDrawerProps) {
                   value={formData.clientStreet}
                   onChange={handleInputChange}
                   className={`h-12 w-full rounded-md border px-5 text-[15px] font-bold outline-none transition ${
-                    isDark
-                      ? "border-[#252945] bg-[#1E2139] text-white"
-                      : "border-[#DFE3FA] bg-white text-[#0C0E16]"
+                    errors.clientStreet
+                      ? "border-[#EC5757]"
+                      : isDark
+                        ? "border-[#252945] bg-[#1E2139] text-white"
+                        : "border-[#DFE3FA] bg-white text-[#0C0E16]"
                   }`}
                 />
+                {errors.clientStreet && (
+                  <p className="mt-2 text-[13px] font-medium text-[#EC5757]">
+                    {errors.clientStreet}
+                  </p>
+                )}
               </div>
 
               <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
@@ -370,11 +477,18 @@ function InvoiceFormDrawer({ isOpen, onClose }: InvoiceFormDrawerProps) {
                   value={formData.invoiceDate}
                   onChange={handleInputChange}
                   className={`h-12 w-full rounded-md border px-5 text-[15px] font-bold outline-none transition ${
-                    isDark
-                      ? "border-[#252945] bg-[#1E2139] text-white"
-                      : "border-[#DFE3FA] bg-white text-[#0C0E16]"
+                    errors.invoiceData
+                      ? "border-[#EC5757]"
+                      : isDark
+                        ? "border-[#252945] bg-[#1E2139] text-white"
+                        : "border-[#DFE3FA] bg-white text-[#0C0E16]"
                   }`}
                 />
+                {errors.invoiceData && (
+                  <p className="mt-2 text-[13px] font-medium text-[#EC5757]">
+                    {errors.invoiceData}
+                  </p>
+                )}
               </div>
 
               <div>
@@ -421,11 +535,18 @@ function InvoiceFormDrawer({ isOpen, onClose }: InvoiceFormDrawerProps) {
                 value={formData.projectDescription}
                 onChange={handleInputChange}
                 className={`h-12 w-full rounded-md border px-5 text-[15px] font-bold outline-none transition ${
-                  isDark
-                    ? "border-[#252945] bg-[#1E2139] text-white"
-                    : "border-[#DFE3FA] bg-white text-[#0C0E16]"
+                  errors.projectDescription
+                    ? "border-[#EC5757]"
+                    : isDark
+                      ? "border-[#252945] bg-[#1E2139] text-white"
+                      : "border-[#DFE3FA] bg-white text-[#0C0E16]"
                 }`}
               />
+              {errors.projectDescription && (
+                <p className="mt-2 text-[13px] font-medium text-[#EC5757]">
+                  {errors.projectDescription}
+                </p>
+              )}
             </div>
           </div>
 
@@ -449,12 +570,19 @@ function InvoiceFormDrawer({ isOpen, onClose }: InvoiceFormDrawerProps) {
                   placeholder="Item Name"
                   value={itemData.name}
                   onChange={handleItemChange}
-                  className={`h-12 rounded-md border px-5 text-[15px] font-bold outline-none transition ${
-                    isDark
-                      ? "border-[#252945] bg-[#1E2139] text-white placeholder:text-[#888EB0]"
-                      : "border-[#DFE3FA] bg-white text-[#0C0E16] placeholder:text-[#888EB0]"
+                  className={`h-12 w-full rounded-md border px-5 text-[15px] font-bold outline-none transition ${
+                    errors.itemName
+                      ? "border-[#EC5757]"
+                      : isDark
+                        ? "border-[#252945] bg-[#1E2139] text-white"
+                        : "border-[#DFE3FA] bg-white text-[#0C0E16]"
                   }`}
                 />
+                {errors.itemName && (
+                  <p className="mt-2 text-[13px] font-medium text-[#EC5757]">
+                    {errors.itemName}
+                  </p>
+                )}
 
                 <input
                   name="quantity"
@@ -462,12 +590,19 @@ function InvoiceFormDrawer({ isOpen, onClose }: InvoiceFormDrawerProps) {
                   placeholder="1"
                   value={itemData.quantity}
                   onChange={handleItemChange}
-                  className={`h-12 rounded-md border px-5 text-[15px] font-bold outline-none transition ${
-                    isDark
-                      ? "border-[#252945] bg-[#1E2139] text-white placeholder:text-[#888EB0]"
-                      : "border-[#DFE3FA] bg-white text-[#0C0E16] placeholder:text-[#888EB0]"
+                  className={`h-12 w-full rounded-md border px-5 text-[15px] font-bold outline-none transition ${
+                    errors.quantity
+                      ? "border-[#EC5757]"
+                      : isDark
+                        ? "border-[#252945] bg-[#1E2139] text-white"
+                        : "border-[#DFE3FA] bg-white text-[#0C0E16]"
                   }`}
                 />
+                {errors.quantity && (
+                  <p className="mt-2 text-[13px] font-medium text-[#EC5757]">
+                    {errors.quantity}
+                  </p>
+                )}
 
                 <input
                   name="price"
@@ -475,12 +610,19 @@ function InvoiceFormDrawer({ isOpen, onClose }: InvoiceFormDrawerProps) {
                   placeholder="0.00"
                   value={itemData.price}
                   onChange={handleItemChange}
-                  className={`h-12 rounded-md border px-5 text-[15px] font-bold outline-none transition ${
-                    isDark
-                      ? "border-[#252945] bg-[#1E2139] text-white placeholder:text-[#888EB0]"
-                      : "border-[#DFE3FA] bg-white text-[#0C0E16] placeholder:text-[#888EB0]"
+                  className={`h-12 w-full rounded-md border px-5 text-[15px] font-bold outline-none transition ${
+                    errors.price
+                      ? "border-[#EC5757]"
+                      : isDark
+                        ? "border-[#252945] bg-[#1E2139] text-white"
+                        : "border-[#DFE3FA] bg-white text-[#0C0E16]"
                   }`}
                 />
+                {errors.price && (
+                  <p className="mt-2 text-[13px] font-medium text-[#EC5757]">
+                    {errors.price}
+                  </p>
+                )}
 
                 <input
                   type="text"
@@ -528,6 +670,7 @@ function InvoiceFormDrawer({ isOpen, onClose }: InvoiceFormDrawerProps) {
           <div className="flex items-center gap-2">
             <button
               type="button"
+              onClick={handleSaveAsDraft}
               className="rounded-full bg-[#373B53] px-6 py-4 text-[15px] font-bold text-[#888EB0] transition hover:bg-[#0C0E16]"
             >
               Save as Draft
@@ -535,6 +678,7 @@ function InvoiceFormDrawer({ isOpen, onClose }: InvoiceFormDrawerProps) {
 
             <button
               type="button"
+              onClick={handleSaveAndSend}
               className="rounded-full bg-[#7C5DFA] px-6 py-4 text-[15px] font-bold text-white transition hover:bg-[#9277FF]"
             >
               Save & Send
