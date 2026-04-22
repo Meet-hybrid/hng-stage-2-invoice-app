@@ -24,11 +24,12 @@ const initialFormData = {
   projectDescription: "",
 };
 
-const initialItemData = {
+const createEmptyItem = () => ({
+  id: crypto.randomUUID(),
   name: "",
   quantity: 1,
   price: 0,
-};
+});
 
 function InvoiceFormDrawer({ isOpen, onClose }: InvoiceFormDrawerProps) {
   const { theme } = useTheme();
@@ -37,11 +38,13 @@ function InvoiceFormDrawer({ isOpen, onClose }: InvoiceFormDrawerProps) {
   const { createInvoice } = useInvoices();
 
   const [formData, setFormData] = useState(initialFormData);
-  const [itemData, setItemData] = useState(initialItemData);
+  const [itemList, setItemList] = useState([createEmptyItem()]);
 
-  const itemTotal = useMemo(() => {
-    return itemData.quantity * itemData.price;
-  }, [itemData.quantity, itemData.price]);
+  const grandTotal = useMemo(() => {
+    return itemList.reduce((sum, item) => {
+      return sum + item.quantity * item.price;
+    }, 0);
+  }, [itemList]);
 
   const [errors, setErrors] = useState<Record<string, string>>({});
 
@@ -68,6 +71,14 @@ function InvoiceFormDrawer({ isOpen, onClose }: InvoiceFormDrawerProps) {
     const paymentDue = new Date(invoiceDate);
     paymentDue.setDate(paymentDue.getDate() + paymentTerms);
 
+    const normalizedItems = itemList.map((item) => ({
+      id: item.id,
+      name: item.name,
+      quantity: item.quantity,
+      price: item.price,
+      total: item.quantity * item.price,
+    }));
+
     return {
       createdAt: formData.invoiceDate,
       paymentDue: paymentDue.toISOString().split("T")[0],
@@ -88,16 +99,8 @@ function InvoiceFormDrawer({ isOpen, onClose }: InvoiceFormDrawerProps) {
         postCode: formData.clientPostCode,
         country: formData.clientCountry,
       },
-      items: [
-        {
-          id: crypto.randomUUID(),
-          name: itemData.name,
-          quantity: itemData.quantity,
-          price: itemData.price,
-          total: itemTotal,
-        },
-      ],
-      total: itemTotal,
+      items: normalizedItems,
+      total: grandTotal,
     };
   }
 
@@ -118,18 +121,43 @@ function InvoiceFormDrawer({ isOpen, onClose }: InvoiceFormDrawerProps) {
     }));
   }
 
-  function handleItemChange(event: React.ChangeEvent<HTMLInputElement>) {
-    const { name, value } = event.target;
-
-    setItemData((currentItem) => ({
-      ...currentItem,
-      [name]: name === "quantity" || name === "price" ? Number(value) : value,
-    }));
+  function handleItemChange(
+    itemId: string,
+    field: "name" | "quantity" | "price",
+    value: string,
+  ) {
+    setItemList((currentItems) =>
+      currentItems.map((item) =>
+        item.id === itemId
+          ? {
+              ...item,
+              [field]:
+                field === "quantity" || field === "price"
+                  ? Number(value)
+                  : value,
+            }
+          : item,
+      ),
+    );
 
     setErrors((currentErrors) => ({
       ...currentErrors,
-      [name === "name" ? "itemName" : name]: "",
+      items: "",
     }));
+  }
+
+  function handleAddNewItem() {
+    setItemList((currentItems) => [...currentItems, createEmptyItem()]);
+  }
+
+  function handleRemoveItem(itemId: string) {
+    setItemList((currentItems) => {
+      if (currentItems.length === 1) {
+        return [createEmptyItem()];
+      }
+
+      return currentItems.filter((item) => item.id !== itemId);
+    });
   }
 
   function handleDiscard() {
@@ -139,7 +167,7 @@ function InvoiceFormDrawer({ isOpen, onClose }: InvoiceFormDrawerProps) {
 
   function resetForm() {
     setFormData(initialFormData);
-    setItemData(initialItemData);
+    setItemList([createEmptyItem()]);
     setErrors({});
   }
 
@@ -198,16 +226,12 @@ function InvoiceFormDrawer({ isOpen, onClose }: InvoiceFormDrawerProps) {
       newErrors.projectDescription = "Project description is required";
     }
 
-    if (!itemData.name.trim()) {
-      newErrors.itemName = "Item name is required";
-    }
+    const hasInvalidItem = itemList.some(
+      (item) => !item.name.trim() || item.quantity <= 0 || item.price <= 0,
+    );
 
-    if (itemData.quantity <= 0) {
-      newErrors.quantity = "Quantity must be greater than 0";
-    }
-
-    if (itemData.price <= 0) {
-      newErrors.price = "Price must be greater than 0";
+    if (hasInvalidItem) {
+      newErrors.items = "Each item must have a name, quantity, and price";
     }
 
     setErrors(newErrors);
@@ -615,91 +639,97 @@ function InvoiceFormDrawer({ isOpen, onClose }: InvoiceFormDrawerProps) {
             </div>
 
             <div className="space-y-4">
-              <div className="mt-4 grid grid-cols-1 gap-4 md:grid-cols-[minmax(0,1fr)_64px_100px_100px_24px] items-center">
-                <input
-                  name="name"
-                  type="text"
-                  placeholder="Item Name"
-                  value={itemData.name}
-                  onChange={handleItemChange}
-                  className={`h-12 w-full rounded-md border px-5 text-[15px] font-bold outline-none transition ${
-                    errors.itemName
-                      ? "border-[#EC5757]"
-                      : isDark
-                        ? "border-[#252945] bg-[#1E2139] text-white"
-                        : "border-[#DFE3FA] bg-white text-[#0C0E16]"
-                  }`}
-                />
-                {errors.itemName && (
-                  <p className="mt-2 text-[13px] font-medium text-[#EC5757]">
-                    {errors.itemName}
-                  </p>
-                )}
+              {itemList.map((item) => {
+                const rowTotal = item.quantity * item.price;
 
-                <input
-                  name="quantity"
-                  type="number"
-                  placeholder="1"
-                  value={itemData.quantity}
-                  onChange={handleItemChange}
-                  className={`h-12 w-full rounded-md border px-5 text-[15px] font-bold outline-none transition ${
-                    errors.quantity
-                      ? "border-[#EC5757]"
-                      : isDark
-                        ? "border-[#252945] bg-[#1E2139] text-white"
-                        : "border-[#DFE3FA] bg-white text-[#0C0E16]"
-                  }`}
-                />
-                {errors.quantity && (
-                  <p className="mt-2 text-[13px] font-medium text-[#EC5757]">
-                    {errors.quantity}
-                  </p>
-                )}
+                return (
+                  <div
+                    key={item.id}
+                    className="grid grid-cols-1 gap-4 md:grid-cols-[minmax(0,1fr)_64px_100px_100px_24px] md:items-center"
+                  >
+                    <input
+                      name="name"
+                      type="text"
+                      placeholder="Item Name"
+                      value={item.name}
+                      onChange={(event) =>
+                        handleItemChange(item.id, "name", event.target.value)
+                      }
+                      className={`h-12 w-full rounded-md border px-5 text-[15px] font-bold outline-none transition ${
+                        isDark
+                          ? "border-[#252945] bg-[#1E2139] text-white"
+                          : "border-[#DFE3FA] bg-white text-[#0C0E16]"
+                      }`}
+                    />
 
-                <input
-                  name="price"
-                  type="number"
-                  placeholder="0.00"
-                  value={itemData.price}
-                  onChange={handleItemChange}
-                  className={`h-12 w-full rounded-md border px-5 text-[15px] font-bold outline-none transition ${
-                    errors.price
-                      ? "border-[#EC5757]"
-                      : isDark
-                        ? "border-[#252945] bg-[#1E2139] text-white"
-                        : "border-[#DFE3FA] bg-white text-[#0C0E16]"
-                  }`}
-                />
-                {errors.price && (
-                  <p className="mt-2 text-[13px] font-medium text-[#EC5757]">
-                    {errors.price}
-                  </p>
-                )}
+                    <input
+                      name="quantity"
+                      type="number"
+                      min="1"
+                      value={item.quantity}
+                      onChange={(event) =>
+                        handleItemChange(
+                          item.id,
+                          "quantity",
+                          event.target.value,
+                        )
+                      }
+                      className={`h-12 w-full rounded-md border px-5 text-[15px] font-bold outline-none transition ${
+                        isDark
+                          ? "border-[#252945] bg-[#1E2139] text-white"
+                          : "border-[#DFE3FA] bg-white text-[#0C0E16]"
+                      }`}
+                    />
 
-                <input
-                  type="text"
-                  value={itemTotal.toFixed(2)}
-                  readOnly
-                  className={`h-12 rounded-md border px-5 text-[15px] font-bold outline-none transition ${
-                    isDark
-                      ? "border-[#252945] bg-[#1E2139] text-[#888EB0]"
-                      : "border-[#DFE3FA] bg-white text-[#888EB0]"
-                  }`}
-                />
+                    <input
+                      name="price"
+                      type="number"
+                      min="0"
+                      step="0.01"
+                      value={item.price}
+                      onChange={(event) =>
+                        handleItemChange(item.id, "price", event.target.value)
+                      }
+                      className={`h-12 w-full rounded-md border px-5 text-[15px] font-bold outline-none transition ${
+                        isDark
+                          ? "border-[#252945] bg-[#1E2139] text-white"
+                          : "border-[#DFE3FA] bg-white text-[#0C0E16]"
+                      }`}
+                    />
 
-                <button
-                  type="button"
-                  onClick={() => setItemData(initialItemData)}
-                  className="flex h-6 w-6 items-center justify-center text-[#888EB0] transition hover:text-[#EC5757]"
-                  aria-label="Remove item"
-                >
-                  <Trash2 size={18} />
-                </button>
-              </div>
+                    <input
+                      type="text"
+                      value={rowTotal.toFixed(2)}
+                      readOnly
+                      className={`h-12 rounded-md border px-5 text-[15px] font-bold outline-none transition ${
+                        isDark
+                          ? "border-[#252945] bg-[#1E2139] text-[#888EB0]"
+                          : "border-[#DFE3FA] bg-white text-[#888EB0]"
+                      }`}
+                    />
+
+                    <button
+                      type="button"
+                      onClick={() => handleRemoveItem(item.id)}
+                      className="flex h-12 w-full items-center justify-center text-[#888EB0] transition hover:text-[#EC5757] md:h-6 md:w-6"
+                      aria-label="Remove item"
+                    >
+                      <Trash2 size={18} />
+                    </button>
+                  </div>
+                );
+              })}
+
+              {errors.items && (
+                <p className="text-[13px] font-medium text-[#EC5757]">
+                  {errors.items}
+                </p>
+              )}
             </div>
 
             <button
               type="button"
+              onClick={handleAddNewItem}
               className={`w-full rounded-full px-6 py-4 text-[15px] font-bold transition ${
                 isDark
                   ? "bg-[#252945] text-[#DFE3FA] hover:bg-white hover:text-[#7E88C3]"
