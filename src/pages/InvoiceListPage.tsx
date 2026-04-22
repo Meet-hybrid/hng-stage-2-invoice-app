@@ -68,7 +68,7 @@ function InvoiceListPage() {
 
   return (
     <section className="mx-auto w-full max-w-182.5">
-      <div className="flex flex-col gap-6 md:flex-row md:items-center md:justify-between">
+      <div className="flex items-start justify-between gap-4 md:items-center">
         <div>
           <h1
             className={`text-3xl font-bold leading-none md:text-4xl ${
@@ -87,12 +87,12 @@ function InvoiceListPage() {
           </p>
         </div>
 
-        <div className="flex items-center gap-5 self-start md:self-auto">
+        <div className="flex items-center gap-4">
           <div className="relative" ref={filterRef}>
             <button
               type="button"
               onClick={() => setShowFilters((current) => !current)}
-              className={`flex items-center gap-3 text-sm font-bold transition cursor-pointer ${
+              className={`flex items-center gap-2 text-sm font-bold transition cursor-pointer ${
                 isDark ? "text-white" : "text-[#0C0E16]"
               }`}
             >
@@ -139,9 +139,9 @@ function InvoiceListPage() {
           <button
             type="button"
             onClick={() => setShowNewInvoiceDrawer(true)}
-            className="inline-flex h-12 items-center gap-4 rounded-full bg-[#7C5DFA] pl-2 pr-4 text-sm font-bold text-white transition hover:bg-[#9277FF]"
+            className="inline-flex h-12 items-center gap-3 rounded-full bg-[#7C5DFA] pl-2 pr-4 text-sm font-bold text-white transition hover:bg-[#9277FF]"
           >
-            <span className="flex h-8 w-8 items-center justify-center rounded-full bg-white">
+            <span className="flex h-8 w-10 md:h-8 md:w-8 items-center justify-center rounded-full bg-white">
               <Plus size={16} className="text-[#7C5DFA]" strokeWidth={3} />
             </span>
             <span>New Invoice</span>
