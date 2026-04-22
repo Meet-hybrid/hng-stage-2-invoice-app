@@ -4,6 +4,7 @@ import rawInvoices from "../data/data.json";
 import InvoiceCard from "../components/InvoiceCard";
 import { useTheme } from "../hooks/useTheme";
 import type { Invoice } from "../types/invoice";
+import InvoiceFormDrawer from "../components/InvoiceFormDrawer";
 
 const invoices = rawInvoices as Invoice[];
 
@@ -15,6 +16,8 @@ function InvoiceListPage() {
   const [selectedStatuses, setSelectedStatuses] = useState<string[]>([]);
 
   const filterRef = useRef<HTMLDivElement | null>(null);
+
+  const [showNewInvoiceDrawer, setShowNewInvoiceDrawer] = useState(false);
 
   function toggleStatus(status: string) {
     setSelectedStatuses((currentStatuses) => {
@@ -135,6 +138,7 @@ function InvoiceListPage() {
 
           <button
             type="button"
+            onClick={() => setShowNewInvoiceDrawer(true)}
             className="inline-flex h-12 items-center gap-4 rounded-full bg-[#7C5DFA] pl-2 pr-4 text-sm font-bold text-white transition hover:bg-[#9277FF]"
           >
             <span className="flex h-8 w-8 items-center justify-center rounded-full bg-white">
@@ -180,6 +184,11 @@ function InvoiceListPage() {
           </div>
         )}
       </div>
+
+      <InvoiceFormDrawer
+        isOpen={showNewInvoiceDrawer}
+        onClose={() => setShowNewInvoiceDrawer(false)}
+      />
     </section>
   );
 }
