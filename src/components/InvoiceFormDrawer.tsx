@@ -1,8 +1,9 @@
 import { useTheme } from "../hooks/useTheme";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useInvoices } from "../hooks/useInvoices";
 import { Trash2 } from "lucide-react";
 import type { Invoice } from "../types/invoice";
+import { useFocusTrap } from "../hooks/useFocusTrap";
 interface InvoiceFormDrawerProps {
   isOpen: boolean;
   onClose: () => void;
@@ -53,6 +54,9 @@ function InvoiceFormDrawer({
 
   const [formData, setFormData] = useState(initialFormData);
   const [itemList, setItemList] = useState<FormItem[]>([createEmptyItem()]);
+
+  const drawerRef = useRef<HTMLElement | null>(null);
+  useFocusTrap(isOpen, drawerRef);
 
   useEffect(() => {
     if (!isOpen) return;
@@ -311,11 +315,16 @@ function InvoiceFormDrawer({
       />
 
       <aside
+        ref={drawerRef}
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="invoice-drawer-title"
         className={`absolute left-0 top-0 h-full w-full overflow-y-auto overflow-x-hidden px-6 py-8 transition md:max-w-155 md:px-14 ${
           isDark ? "bg-[#141625]" : "bg-white"
         } custom-scrollbar`}
       >
         <h2
+          id="invoice-drawer-title"
           className={`text-2xl font-bold tracking-[-0.5px] ${
             isDark ? "text-white" : "text-[#0C0E16]"
           }`}

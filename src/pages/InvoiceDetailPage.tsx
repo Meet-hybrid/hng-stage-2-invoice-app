@@ -4,8 +4,9 @@ import StatusBadge from "../components/StatusBadge";
 import { useTheme } from "../hooks/useTheme";
 import { formatCurrency } from "../utils/formatCurrency";
 import { useInvoices } from "../hooks/useInvoices";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import InvoiceFormDrawer from "../components/InvoiceFormDrawer";
+import { useFocusTrap } from "../hooks/useFocusTrap";
 
 function InvoiceDetailPage() {
   const { id } = useParams();
@@ -21,6 +22,26 @@ function InvoiceDetailPage() {
   const invoice = invoices.find((item) => item.id === id);
 
   const [isEditDrawerOpen, setIsEditDrawerOpen] = useState(false);
+
+  const deleteModalRef = useRef<HTMLDivElement | null>(null);
+
+  useFocusTrap(showDeleteModal, deleteModalRef);
+
+  useEffect(() => {
+    function handleEscape(event: KeyboardEvent) {
+      if (event.key === "Escape") {
+        setShowDeleteModal(false);
+      }
+    }
+
+    if (showDeleteModal) {
+      window.addEventListener("keydown", handleEscape);
+    }
+
+    return () => {
+      window.removeEventListener("keydown", handleEscape);
+    };
+  }, [showDeleteModal]);
 
   if (!invoice) {
     return (
@@ -318,11 +339,16 @@ function InvoiceDetailPage() {
           />
 
           <div
+            ref={deleteModalRef}
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="delete-modal-title"
             className={`relative z-10 w-full max-w-md rounded-lg p-8 ${
               isDark ? "bg-[#1E2139]" : "bg-white"
             }`}
           >
             <h2
+              id="delete-modal-title"
               className={`text-2xl font-bold ${
                 isDark ? "text-white" : "text-[#0C0E16]"
               }`}
