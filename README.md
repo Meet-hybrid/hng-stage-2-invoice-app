@@ -77,16 +77,39 @@ Form validation was included to make invalid fields show visual feedback and pre
 ```txt
 hng-stage-2-invoice-app
 ├── src/
-|   ├── assets/
-|   ├── components/
-|   ├── context/
-|   ├── data/
-|   ├── hooks/
-|   ├── layout/
-|   ├── pages/
-|   ├── routes/
-|   ├── types/
-|   └── utils/
+│   ├── assets/
+│   │   └── illustration-empty.png
+│   ├── components/
+│   │   ├── InvoiceCard.tsx
+│   │   ├── InvoiceFormDrawer.tsx
+│   │   ├── MobileNavbar.tsx
+│   │   ├── Sidebar.tsx
+│   │   └── StatusBadge.tsx
+│   ├── context/
+│   │   ├── InvoiceContext.tsx
+│   │   ├── theme-context.ts
+│   │   └── ThemeContext.tsx
+│   ├── data/
+│   │   └── data.json
+│   ├── hooks/
+│   │   ├── useFocusTrap.ts
+│   │   ├── useInvoices.ts
+│   │   └── useTheme.ts
+│   ├── layout/
+│   │   └── AppLayout.tsx
+│   ├── pages/
+│   │   ├── InvoiceDetailPage.tsx
+│   │   └── InvoiceListPage.tsx
+│   ├── routes/
+│   │   └── router.tsx
+│   ├── types/
+│   │   └── invoice.ts
+│   └── utils/
+│       └── formatCurrency.ts
+├── App.css
+├── App.tsx
+├── index.css
+├── main.tsx
 ├── eslint.config.js
 ├── index.html
 ├── package.json
