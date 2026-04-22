@@ -4,6 +4,7 @@ import InvoiceCard from "../components/InvoiceCard";
 import { useTheme } from "../hooks/useTheme";
 import InvoiceFormDrawer from "../components/InvoiceFormDrawer";
 import { useInvoices } from "../hooks/useInvoices";
+import emptyIllustration from "../assets/illustration-empty.png";
 
 function InvoiceListPage() {
   const { theme } = useTheme();
@@ -155,24 +156,32 @@ function InvoiceListPage() {
           ))
         ) : (
           <div
-            className={`rounded-lg px-6 py-16 text-center ${
-              isDark ? "bg-[#1E2139]" : "bg-white"
+            className={`mx-auto flex max-w-sm flex-col items-center pt-4 pb-4 text-center ${
+              isDark ? "bg-[#1E2139]" : "bg-none"
             }`}
           >
+            <img
+              src={emptyIllustration}
+              alt="No invoices"
+              className="mx-auto w-60.25 max-w-full"
+            />
+
             <h2
-              className={`text-xl font-bold ${
+              className={`mt-16 text-2xl font-bold tracking-[-0.75px] ${
                 isDark ? "text-white" : "text-[#0C0E16]"
               }`}
             >
-              No invoices found
+              There is nothing here
             </h2>
 
             <p
-              className={`mt-3 text-sm ${
-                isDark ? "text-[#DFE3FA]" : "text-[#888EB0]"
+              className={`mt-6 text-[13px] font-medium leading-3.75 ${
+                isDark ? "text-[#888EB0]" : "text-[#888EB0]"
               }`}
             >
-              Try selecting a different status filter.
+              Create an invoice by clicking the
+              <br />
+              New Invoice button and get started
             </p>
           </div>
         )}

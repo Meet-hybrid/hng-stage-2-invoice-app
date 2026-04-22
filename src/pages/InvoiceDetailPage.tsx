@@ -5,6 +5,7 @@ import { useTheme } from "../hooks/useTheme";
 import { formatCurrency } from "../utils/formatCurrency";
 import { useInvoices } from "../hooks/useInvoices";
 import { useState } from "react";
+import InvoiceFormDrawer from "../components/InvoiceFormDrawer";
 
 function InvoiceDetailPage() {
   const { id } = useParams();
@@ -15,9 +16,11 @@ function InvoiceDetailPage() {
 
   const [showDeleteModal, setShowDeleteModal] = useState(false);
 
-  const { invoices, deleteInvoice } = useInvoices();
+  const { invoices, deleteInvoice, markAsPaid } = useInvoices();
 
   const invoice = invoices.find((item) => item.id === id);
+
+  const [isEditDrawerOpen, setIsEditDrawerOpen] = useState(false);
 
   if (!invoice) {
     return (
@@ -74,6 +77,7 @@ function InvoiceDetailPage() {
         <div className="hidden md:flex md:flex-wrap md:gap-3">
           <button
             type="button"
+            onClick={() => setIsEditDrawerOpen(true)}
             className={`rounded-full px-6 py-4 text-[15px] font-bold transition ${
               isDark
                 ? "bg-[#252945] text-[#DFE3FA] hover:bg-white hover:text-[#7E88C3]"
@@ -93,6 +97,7 @@ function InvoiceDetailPage() {
 
           <button
             type="button"
+            onClick={() => markAsPaid(invoice.id)}
             className="rounded-full bg-[#7C5DFA] px-6 py-4 text-[15px] font-bold text-white transition hover:bg-[#9277FF]"
           >
             Mark as Paid
@@ -277,6 +282,7 @@ function InvoiceDetailPage() {
       >
         <button
           type="button"
+          onClick={() => setIsEditDrawerOpen(true)}
           className={`rounded-full px-6 py-4 text-[15px] font-bold transition ${
             isDark
               ? "bg-[#252945] text-[#DFE3FA] hover:bg-white hover:text-[#7E88C3]"
@@ -296,6 +302,7 @@ function InvoiceDetailPage() {
 
         <button
           type="button"
+          onClick={() => markAsPaid(invoice.id)}
           className="rounded-full bg-[#7C5DFA] px-6 py-4 text-[15px] font-bold text-white transition hover:bg-[#9277FF]"
         >
           Mark as Paid
@@ -360,6 +367,13 @@ function InvoiceDetailPage() {
           </div>
         </div>
       )}
+
+      <InvoiceFormDrawer
+        isOpen={isEditDrawerOpen}
+        onClose={() => setIsEditDrawerOpen(false)}
+        mode="edit"
+        invoiceToEdit={invoice}
+      />
     </section>
   );
 }

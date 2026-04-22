@@ -2,11 +2,20 @@ import { useTheme } from "../hooks/useTheme";
 import { useEffect, useMemo, useState } from "react";
 import { useInvoices } from "../hooks/useInvoices";
 import { Trash2 } from "lucide-react";
-
+import type { Invoice } from "../types/invoice";
 interface InvoiceFormDrawerProps {
   isOpen: boolean;
   onClose: () => void;
+  mode?: "create" | "edit";
+  invoiceToEdit?: Invoice | null;
 }
+
+type FormItem = {
+  id: string;
+  name: string;
+  quantity: number;
+  price: number;
+};
 
 const initialFormData = {
   senderStreet: "",
@@ -24,21 +33,63 @@ const initialFormData = {
   projectDescription: "",
 };
 
-const createEmptyItem = () => ({
+const createEmptyItem = (): FormItem => ({
   id: crypto.randomUUID(),
   name: "",
   quantity: 1,
   price: 0,
 });
 
-function InvoiceFormDrawer({ isOpen, onClose }: InvoiceFormDrawerProps) {
+function InvoiceFormDrawer({
+  isOpen,
+  onClose,
+  mode = "create",
+  invoiceToEdit = null,
+}: InvoiceFormDrawerProps) {
   const { theme } = useTheme();
   const isDark = theme === "dark";
 
-  const { createInvoice } = useInvoices();
+  const { createInvoice, updateInvoice } = useInvoices();
 
   const [formData, setFormData] = useState(initialFormData);
-  const [itemList, setItemList] = useState([createEmptyItem()]);
+  const [itemList, setItemList] = useState<FormItem[]>([createEmptyItem()]);
+
+  useEffect(() => {
+    if (!isOpen) return;
+
+    if (mode === "edit" && invoiceToEdit) {
+      setFormData({
+        senderStreet: invoiceToEdit.senderAddress.street,
+        senderCity: invoiceToEdit.senderAddress.city,
+        senderPostCode: invoiceToEdit.senderAddress.postCode,
+        senderCountry: invoiceToEdit.senderAddress.country,
+        clientName: invoiceToEdit.clientName,
+        clientEmail: invoiceToEdit.clientEmail,
+        clientStreet: invoiceToEdit.clientAddress.street,
+        clientCity: invoiceToEdit.clientAddress.city,
+        clientPostCode: invoiceToEdit.clientAddress.postCode,
+        clientCountry: invoiceToEdit.clientAddress.country,
+        invoiceDate: invoiceToEdit.createdAt,
+        paymentTerms: String(invoiceToEdit.paymentTerms),
+        projectDescription: invoiceToEdit.description,
+      });
+
+      setItemList(
+        invoiceToEdit.items.map((item) => ({
+          id: item.id,
+          name: item.name,
+          quantity: item.quantity,
+          price: item.price,
+        })),
+      );
+
+      setErrors({});
+    }
+
+    if (mode === "create") {
+      resetForm();
+    }
+  }, [isOpen, mode, invoiceToEdit]);
 
   const grandTotal = useMemo(() => {
     return itemList.reduce((sum, item) => {
@@ -177,7 +228,13 @@ function InvoiceFormDrawer({ isOpen, onClose }: InvoiceFormDrawerProps) {
     if (!isFormValid) return;
 
     const newInvoice = buildInvoice("draft");
-    createInvoice(newInvoice);
+
+    if (mode === "edit" && invoiceToEdit) {
+      updateInvoice(invoiceToEdit.id, newInvoice);
+    } else {
+      createInvoice(newInvoice);
+    }
+
     resetForm();
     onClose();
   }
@@ -188,7 +245,13 @@ function InvoiceFormDrawer({ isOpen, onClose }: InvoiceFormDrawerProps) {
     if (!isFormValid) return;
 
     const newInvoice = buildInvoice("pending");
-    createInvoice(newInvoice);
+
+    if (mode === "edit" && invoiceToEdit) {
+      updateInvoice(invoiceToEdit.id, newInvoice);
+    } else {
+      createInvoice(newInvoice);
+    }
+
     resetForm();
     onClose();
   }
@@ -257,7 +320,9 @@ function InvoiceFormDrawer({ isOpen, onClose }: InvoiceFormDrawerProps) {
             isDark ? "text-white" : "text-[#0C0E16]"
           }`}
         >
-          New Invoice
+          {mode === "edit" && invoiceToEdit
+            ? `Edit #${invoiceToEdit.id}`
+            : "New Invoice"}
         </h2>
 
         <div className="mt-10 space-y-10">
@@ -772,7 +837,7 @@ function InvoiceFormDrawer({ isOpen, onClose }: InvoiceFormDrawerProps) {
               onClick={handleSaveAndSend}
               className="rounded-full bg-[#7C5DFA] px-6 py-4 text-[15px] font-bold text-white transition hover:bg-[#9277FF]"
             >
-              Save & Send
+              {mode === "edit" ? "Save Changes" : "Save & Send"}
             </button>
           </div>
         </div>
