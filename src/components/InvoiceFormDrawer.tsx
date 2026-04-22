@@ -1,6 +1,7 @@
 import { useTheme } from "../hooks/useTheme";
 import { useEffect, useMemo, useState } from "react";
 import { useInvoices } from "../hooks/useInvoices";
+import { Trash2 } from "lucide-react";
 
 interface InvoiceFormDrawerProps {
   isOpen: boolean;
@@ -685,6 +686,15 @@ function InvoiceFormDrawer({ isOpen, onClose }: InvoiceFormDrawerProps) {
                       : "border-[#DFE3FA] bg-white text-[#888EB0]"
                   }`}
                 />
+
+                <button
+                  type="button"
+                  onClick={() => setItemData(initialItemData)}
+                  className="flex h-6 w-6 items-center justify-center text-[#888EB0] transition hover:text-[#EC5757]"
+                  aria-label="Remove item"
+                >
+                  <Trash2 size={18} />
+                </button>
               </div>
             </div>
 

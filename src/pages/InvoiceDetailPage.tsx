@@ -1,17 +1,21 @@
 import { ChevronLeft } from "lucide-react";
-import { Link, useParams } from "react-router-dom";
-import rawInvoices from "../data/data.json";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import StatusBadge from "../components/StatusBadge";
 import { useTheme } from "../hooks/useTheme";
-import type { Invoice } from "../types/invoice";
 import { formatCurrency } from "../utils/formatCurrency";
-
-const invoices = rawInvoices as Invoice[];
+import { useInvoices } from "../hooks/useInvoices";
+import { useState } from "react";
 
 function InvoiceDetailPage() {
   const { id } = useParams();
   const { theme } = useTheme();
   const isDark = theme === "dark";
+
+  const navigate = useNavigate();
+
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+
+  const { invoices, deleteInvoice } = useInvoices();
 
   const invoice = invoices.find((item) => item.id === id);
 
@@ -81,6 +85,7 @@ function InvoiceDetailPage() {
 
           <button
             type="button"
+            onClick={() => setShowDeleteModal(true)}
             className="rounded-full bg-[#EC5757] px-6 py-4 text-[15px] font-bold text-white transition hover:bg-[#FF9797]"
           >
             Delete
@@ -283,6 +288,7 @@ function InvoiceDetailPage() {
 
         <button
           type="button"
+          onClick={() => setShowDeleteModal(true)}
           className="rounded-full bg-[#EC5757] px-6 py-4 text-[15px] font-bold text-white transition hover:bg-[#FF9797]"
         >
           Delete
@@ -295,6 +301,65 @@ function InvoiceDetailPage() {
           Mark as Paid
         </button>
       </div>
+
+      {showDeleteModal && invoice && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center px-6">
+          <div
+            className="absolute inset-0 bg-black/50"
+            onClick={() => setShowDeleteModal(false)}
+            aria-hidden="true"
+          />
+
+          <div
+            className={`relative z-10 w-full max-w-md rounded-lg p-8 ${
+              isDark ? "bg-[#1E2139]" : "bg-white"
+            }`}
+          >
+            <h2
+              className={`text-2xl font-bold ${
+                isDark ? "text-white" : "text-[#0C0E16]"
+              }`}
+            >
+              Confirm Deletion
+            </h2>
+
+            <p
+              className={`mt-4 text-[13px] leading-6 ${
+                isDark ? "text-[#DFE3FA]" : "text-[#888EB0]"
+              }`}
+            >
+              Are you sure you want to delete invoice #{invoice.id}? This action
+              cannot be undone.
+            </p>
+
+            <div className="mt-6 flex items-center justify-end gap-2">
+              <button
+                type="button"
+                onClick={() => setShowDeleteModal(false)}
+                className={`rounded-full px-6 py-4 text-[15px] font-bold transition ${
+                  isDark
+                    ? "bg-[#252945] text-[#DFE3FA] hover:bg-white hover:text-[#7E88C3]"
+                    : "bg-[#F9FAFE] text-[#7E88C3] hover:bg-[#DFE3FA]"
+                }`}
+              >
+                Cancel
+              </button>
+
+              <button
+                type="button"
+                onClick={() => {
+                  deleteInvoice(invoice.id);
+                  setShowDeleteModal(false);
+                  navigate("/");
+                }}
+                className="rounded-full bg-[#EC5757] px-6 py-4 text-[15px] font-bold text-white transition hover:bg-[#FF9797]"
+              >
+                Delete
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </section>
   );
 }
