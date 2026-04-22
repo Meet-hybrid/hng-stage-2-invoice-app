@@ -222,4 +222,4 @@ Any future push to the main branch will automatically trigger a new deployment o
 
 ## Author
 
-Built by Ibrahim Ibrahim.
+Ibrahim Ibrahim.
