@@ -157,7 +157,7 @@ function InvoiceListPage() {
         ) : (
           <div
             className={`mx-auto flex max-w-sm flex-col items-center pt-4 pb-4 text-center ${
-              isDark ? "bg-[#1E2139]" : "bg-none"
+              isDark ? "bg-none" : "bg-none"
             }`}
           >
             <img

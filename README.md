@@ -1,73 +1,202 @@
-# React + TypeScript + Vite
+# HNG Stage2 Invoice Management App
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A responsive Invoice Management Application built with React, TypeScript, Tailwind CSS and Vite.
 
-Currently, two official plugins are available:
+The application allows users to create, view, edit and delete invoices while supporting invoice statuses, filtering, dark mode and responsive layouts.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+---
 
-## React Compiler
+## Live Demo
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+- [Live URL](https://hng-stage-2-invoice-app-eight.vercel.app/)
+- [GitHub Repository](https://github.com/iibrahimx/hng-stage-2-invoice-app)
 
-## Expanding the ESLint configuration
+---
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+## Features
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+This application allows users to:
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+- Create invoices
+- Read and view invoice details
+- Edit existing invoices
+- Delete invoices with confirmation modal
+- Save invoices as draft
+- Mark pending invoices as paid
+- Filter invoices by status
+- Toggle between light and dark mode
+- Persist invoice and theme data using LocalStorage
+- Experience a responsive layout across mobile, tablet and desktop
+- See hover states on buttons, filters, invoice cards and form inputs
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+---
+
+## Invoice Status Flow
+
+Invoices can have one of the following statuses:
+
+- Draft
+- Pending
+- Paid
+
+Behavior:
+
+- Draft invoices can be edited later
+- Pending invoices can be marked as paid
+- Paid invoices remain paid and cannot return to draft
+- Status updates are reflected in both the invoice list and detail pages
+
+---
+
+## Form Validation
+
+Form validation was included to make invalid fields show visual feedback and prevent submission until corrected. The invoice form includes validation for:
+
+- Required fields
+- Valid client email format
+- At least one invoice item
+- Quantity greater than 0
+- Price greater than 0
+
+---
+
+## Tech Stack
+
+- React
+- TypeScript
+- Vite
+- Tailwind CSS
+- React Router DOM
+- Lucide React Icons
+- LocalStorage
+
+---
+
+## Project Structure
+
+```txt
+hng-stage-2-invoice-app
+├── src/
+|   ├── assets/
+|   ├── components/
+|   ├── context/
+|   ├── data/
+|   ├── hooks/
+|   ├── layout/
+|   ├── pages/
+|   ├── routes/
+|   ├── types/
+|   └── utils/
+├── eslint.config.js
+├── index.html
+├── package.json
+├── README.md
+├── tsconfig.app.json
+├── tsconfig.json
+├── tsconfig.node.json
+└── vite.config.ts
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+---
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+## Main Components
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+- Invoice List Page
+- Invoice Detail Page
+- Invoice Form Drawer
+- Status Badge Component
+- Filter Dropdown
+- Theme Context Provider
+- Reusable Modal Components
+
+---
+
+## Setup Instructions
+
+1. Clone the repository:
+
+```bash
+git clone https://github.com/iibrahimx/hng-stage-2-invoice-app.git
 ```
+
+2. Navigate into the project folder:
+
+```bash
+cd hng-stage-2-invoice-app
+```
+
+3. Install dependencies:
+
+```bash
+npm install
+```
+
+4. Start the development server:
+
+```bash
+npm run dev
+```
+
+5. Build for production:
+
+```bash
+npm run build
+```
+
+---
+
+## Accessibility Notes
+
+The application includes several accessibility improvements:
+
+- Semantic HTML elements
+- Proper form labels
+- Keyboard accessible buttons
+- ESC key support for closing modals
+- Focus trapping inside modals
+- Click outside modal support
+- Good contrast for both light and dark themes
+
+---
+
+## Responsive Design
+
+The application is responsive across:
+
+- Mobile devices (320px+)
+- Tablet devices (768px+)
+- Desktop screens (1024px+)
+
+Layouts, forms, filters and invoice cards adapt based on screen size.
+
+---
+
+## Trade-Offs
+
+- LocalStorage was used instead of a backend for simplicity and faster development
+- Some mobile and desktop layouts required conditional rendering for better visual alignment
+- IDs are generated locally rather than from a backend database
+
+---
+
+## Improvements Beyond Requirements
+
+- Seed invoice data was added so the application feels populated immediately on first load
+- Reusable hooks and utility functions were extracted to keep components cleaner and easier to maintain
+- Reusable modal logic was implemented for delete confirmation and form drawers
+- Filter dropdown closes automatically when clicking outside or pressing ESC
+- Local invoice IDs are generated automatically for newly created invoices
+
+---
+
+## Deployment
+
+The project is deployed on Vercel.
+
+Any future push to the main branch will automatically trigger a new deployment on Vercel, so you do not need to manually redeploy each time.
+
+---
+
+## Author
+
+Built by Ibrahim Ibrahim.
