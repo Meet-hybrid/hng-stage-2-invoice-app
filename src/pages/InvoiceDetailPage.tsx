@@ -80,13 +80,13 @@ function InvoiceDetailPage() {
       </Link>
 
       <div
-        className={`mt-8 flex flex-col gap-6 rounded-lg px-6 py-6 md:flex-row md:items-center md:justify-between md:px-8 ${
+        className={`mt-8 flex flex-col gap-5 rounded-xl px-5 py-5 md:flex-row md:items-center md:justify-between md:px-6 ${
           isDark ? "bg-[#1E2139]" : "bg-white"
         }`}
       >
         <div className="flex items-center gap-4">
           <span
-            className={`text-[13px] font-medium ${
+            className={`text-[12px] font-semibold uppercase tracking-wide ${
               isDark ? "text-[#DFE3FA]" : "text-[#858BB2]"
             }`}
           >

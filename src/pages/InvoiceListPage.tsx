@@ -68,10 +68,10 @@ function InvoiceListPage() {
 
   return (
     <section className="mx-auto w-full max-w-182.5">
-      <div className="flex items-start justify-between gap-4 md:items-center">
+      <div className="flex flex-col gap-8 items-start md:flex-row md:items-center md:justify-between md:gap-4">
         <div>
           <h1
-            className={`text-3xl font-bold leading-none md:text-4xl ${
+            className={`text-2xl font-bold leading-tight md:text-3xl ${
               isDark ? "text-white" : "text-[#0C0E16]"
             }`}
           >
@@ -79,7 +79,7 @@ function InvoiceListPage() {
           </h1>
 
           <p
-            className={`mt-2 text-sm font-medium ${
+            className={`mt-3 text-xs font-semibold tracking-wide ${
               isDark ? "text-[#DFE3FA]" : "text-[#888EB0]"
             }`}
           >
@@ -92,7 +92,7 @@ function InvoiceListPage() {
             <button
               type="button"
               onClick={() => setShowFilters((current) => !current)}
-              className={`flex items-center gap-2 text-sm font-bold transition cursor-pointer ${
+              className={`flex items-center gap-2 text-xs font-extrabold tracking-wide uppercase transition cursor-pointer ${
                 isDark ? "text-white" : "text-[#0C0E16]"
               }`}
             >
@@ -108,15 +108,15 @@ function InvoiceListPage() {
 
             {showFilters && (
               <div
-                className={`absolute right-0 top-9 z-20 w-48 rounded-lg px-6 py-6 shadow-[0_10px_20px_rgba(72,84,159,0.25)] ${
+                className={`absolute right-0 top-9 z-20 w-40 rounded-xl px-5 py-5 shadow-[0_8px_16px_rgba(72,84,159,0.2)] ${
                   isDark ? "bg-[#252945]" : "bg-white"
                 }`}
               >
-                <div className="space-y-4">
+                <div className="space-y-3">
                   {["draft", "pending", "paid"].map((status) => (
                     <label
                       key={status}
-                      className={`flex cursor-pointer items-center gap-3 text-[15px] font-bold capitalize ${
+                      className={`flex cursor-pointer items-center gap-3 text-[13px] font-semibold uppercase tracking-tight ${
                         isDark ? "text-white" : "text-[#0C0E16]"
                       }`}
                     >
@@ -139,7 +139,7 @@ function InvoiceListPage() {
           <button
             type="button"
             onClick={() => setShowNewInvoiceDrawer(true)}
-            className="inline-flex h-12 items-center gap-3 rounded-full bg-[#7C5DFA] pl-2 pr-4 text-sm font-bold text-white transition hover:bg-[#9277FF]"
+            className="inline-flex h-10 items-center gap-2 rounded-full bg-[#7C5DFA] pl-2 pr-4 text-xs font-bold text-white transition hover:bg-[#9277FF] uppercase tracking-wide"
           >
             <span className="flex h-8 w-10 md:h-8 md:w-8 items-center justify-center rounded-full bg-white">
               <Plus size={16} className="text-[#7C5DFA]" strokeWidth={3} />

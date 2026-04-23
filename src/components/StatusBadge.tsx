@@ -19,9 +19,9 @@ function StatusBadge({ status }: StatusBadgeProps) {
 
   return (
     <div
-      className={`inline-flex h-10 min-w-26 items-center justify-center gap-2 rounded-md px-4 text-[15px] font-bold capitalize tracking-[-0.25px] ${statusStyles[status]}`}
+      className={`inline-flex h-8 min-w-24 items-center justify-center gap-2 rounded-lg px-3 text-[11px] font-bold uppercase tracking-wide ${statusStyles[status]}`}
     >
-      <span className="h-2 w-2 rounded-full bg-current" />
+      <span className="h-1.5 w-1.5 rounded-full bg-current" />
       <span>{status}</span>
     </div>
   );

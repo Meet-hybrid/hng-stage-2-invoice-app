@@ -20,7 +20,7 @@ function AppLayout() {
           <MobileNavbar />
 
           <main
-            className={`flex-1 px-6 py-8 transition-colors duration-300 md:px-12 md:py-14 xl:px-20 ${
+            className={`flex-1 px-4 py-6 transition-colors duration-300 md:px-10 md:py-12 xl:px-16 ${
               isDark ? "bg-[#141625]" : "bg-[#F8F8FB]"
             }`}
           >
