@@ -110,7 +110,6 @@ invoice-app
 1. Clone the repository and navigate into the project folder:
 
 ```bash
-git clone <your-repo-url>
 cd hng-stage-2-invoice-app
 ```
 
