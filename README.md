@@ -57,9 +57,11 @@ Invalid fields display visual feedback and block submission until resolved.
 
 ## Project Structure
 
-hng-stage-2-invoice-app
+```txt
+invoice-app
 ├── src/
 │   ├── assets/
+│   │   └── illustration-empty.png
 │   ├── components/
 │   │   ├── InvoiceCard.tsx
 │   │   ├── InvoiceFormDrawer.tsx
@@ -87,11 +89,19 @@ hng-stage-2-invoice-app
 │   │   └── invoice.ts
 │   └── utils/
 │       └── formatCurrency.ts
+├── App.css
 ├── App.tsx
+├── index.css
+├── main.tsx
+├── eslint.config.js
 ├── index.html
 ├── package.json
-├── vite.config.ts
-└── README.md
+├── README.md
+├── tsconfig.app.json
+├── tsconfig.json
+├── tsconfig.node.json
+└── vite.config.ts
+```
 
 ---
 
