@@ -1,45 +1,55 @@
-<!-- # Invoice Management App
+# HNG Stage2 Invoice Management App
 
-A responsive Invoice Management Application built with React, TypeScript, Tailwind CSS, and Vite. Users can create, view, edit, and delete invoices with support for status management, filtering, dark mode, and fully responsive layouts.
+A responsive Invoice Management Application built with React, TypeScript, Tailwind CSS and Vite.
 
----
+The application allows users to create, view, edit and delete invoices while supporting invoice statuses, filtering, dark mode and responsive layouts.
+
 
 
 ## Features
 
-- Create, view, edit, and delete invoices
-- Save invoices as drafts
+This application allows users to:
+
+- Create invoices
+- Read and view invoice details
+- Edit existing invoices
+- Delete invoices with confirmation modal
+- Save invoices as draft
 - Mark pending invoices as paid
-- Filter invoices by status (Draft, Pending, Paid)
+- Filter invoices by status
 - Toggle between light and dark mode
 - Persist invoice and theme data using LocalStorage
-- Fully responsive layout across mobile, tablet, and desktop
-- Hover states on buttons, filters, invoice cards, and form inputs
+- Experience a responsive layout across mobile, tablet and desktop
+- See hover states on buttons, filters, invoice cards and form inputs
 
 ---
 
 ## Invoice Status Flow
 
-Invoices can hold one of three statuses: **Draft**, **Pending**, or **Paid**.
+Invoices can have one of the following statuses:
 
-- Draft invoices can be edited at any time
+- Draft
+- Pending
+- Paid
+
+Behavior:
+
+- Draft invoices can be edited later
 - Pending invoices can be marked as paid
-- Paid invoices are final and cannot revert to draft
-- Status changes are reflected on both the list and detail views
+- Paid invoices remain paid and cannot return to draft
+- Status updates are reflected in both the invoice list and detail pages
 
 ---
 
 ## Form Validation
 
-The invoice form validates the following before submission:
+Form validation was included to make invalid fields show visual feedback and prevent submission until corrected. The invoice form includes validation for:
 
-- All required fields are filled
-- Client email is in a valid format
-- At least one invoice item exists
-- Item quantity is greater than 0
-- Item price is greater than 0
-
-Invalid fields display visual feedback and block submission until resolved.
+- Required fields
+- Valid client email format
+- At least one invoice item
+- Quantity greater than 0
+- Price greater than 0
 
 ---
 
@@ -57,9 +67,11 @@ Invalid fields display visual feedback and block submission until resolved.
 
 ## Project Structure
 
-hng-stage-2-invoice-app
+```txt
+invoice-app
 ├── src/
 │   ├── assets/
+│   │   └── illustration-empty.png
 │   ├── components/
 │   │   ├── InvoiceCard.tsx
 │   │   ├── InvoiceFormDrawer.tsx
@@ -87,36 +99,61 @@ hng-stage-2-invoice-app
 │   │   └── invoice.ts
 │   └── utils/
 │       └── formatCurrency.ts
+├── App.css
 ├── App.tsx
+├── index.css
+├── main.tsx
+├── eslint.config.js
 ├── index.html
 ├── package.json
-├── vite.config.ts
-└── README.md
+├── README.md
+├── tsconfig.app.json
+├── tsconfig.json
+├── tsconfig.node.json
+└── vite.config.ts
+```
 
 ---
 
-## Setup
+## Main Components
 
-1. Clone the repository and navigate into the project folder:
+- Invoice List Page
+- Invoice Detail Page
+- Invoice Form Drawer
+- Status Badge Component
+- Filter Dropdown
+- Theme Context Provider
+- Reusable Modal Components
+
+---
+
+## Setup Instructions
+
+1. Clone the repository:
 
 ```bash
-git clone <your-repo-url>
-cd hng-stage-2-invoice-app
+git clone https://github.com/happyboy24/Invoice-App.git
 ```
 
-2. Install dependencies:
+2. Navigate into the project folder:
+
+```bash
+cd Invoice App
+```
+
+3. Install dependencies:
 
 ```bash
 npm install
 ```
 
-3. Start the development server:
+4. Start the development server:
 
 ```bash
 npm run dev
 ```
 
-4. Build for production:
+5. Build for production:
 
 ```bash
 npm run build
@@ -124,53 +161,56 @@ npm run build
 
 ---
 
-## Accessibility
+## Accessibility Notes
 
-- Semantic HTML throughout
-- Proper labels on all form inputs
-- Keyboard-accessible buttons and controls
-- ESC key closes modals and dropdowns
-- Focus trapping inside open modals
-- Click-outside support to dismiss overlays
-- Strong contrast ratios in both light and dark themes
+The application includes several accessibility improvements:
+
+- Semantic HTML elements
+- Proper form labels
+- Keyboard accessible buttons
+- ESC key support for closing modals
+- Focus trapping inside modals
+- Click outside modal support
+- Good contrast for both light and dark themes
 
 ---
 
 ## Responsive Design
 
-The layout adapts across three breakpoints:
+The application is responsive across:
 
-- **Mobile** — 320px and up
-- **Tablet** — 768px and up
-- **Desktop** — 1024px and up
+- Mobile devices (320px+)
+- Tablet devices (768px+)
+- Desktop screens (1024px+)
 
-Forms, filters, and invoice cards all reflow based on the available screen width.
-
----
-
-## Design Decisions
-
-- **LocalStorage over a backend** — Keeps the stack simple and avoids the need for a server or database during development.
-- **Conditional rendering for layouts** — Some mobile and desktop views needed separate rendering logic for proper visual alignment.
-- **Local ID generation** — Invoice IDs are generated on the client since there is no backend to issue them.
+Layouts, forms, filters and invoice cards adapt based on screen size.
 
 ---
 
-## Additional Improvements
+## Trade-Offs
 
-- Seed data is included so the app feels populated on first load, rather than starting empty.
-- Reusable hooks and utility functions are extracted to keep components lean and easy to follow.
-- Modal logic (delete confirmation, form drawer) is shared across the app rather than duplicated.
-- The filter dropdown closes automatically when clicking outside or pressing ESC.
+- LocalStorage was used instead of a backend for simplicity and faster development
+- Some mobile and desktop layouts required conditional rendering for better visual alignment
+- IDs are generated locally rather than from a backend database
+
+---
+
+## Improvements Beyond Requirements
+
+- Seed invoice data was added so the application feels populated immediately on first load
+- Reusable hooks and utility functions were extracted to keep components cleaner and easier to maintain
+- Reusable modal logic was implemented for delete confirmation and form drawers
+- Filter dropdown closes automatically when clicking outside or pressing ESC
+- Local invoice IDs are generated automatically for newly created invoices
 
 ---
 
 ## Deployment
 
-The project is deployed on Vercel. Pushing to the main branch triggers an automatic redeployment — no manual steps required.
+The project is deployed on Netlify.
 
----
+Any future push to the main branch will automatically trigger a new deployment on Vercel, so you do not need to manually redeploy each time.
 
-## Author
 
-Michael Philip -->
+
+# Invoice-App
