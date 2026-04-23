@@ -1,4 +1,4 @@
-# Invoice Management App
+<!-- # Invoice Management App
 
 A responsive Invoice Management Application built with React, TypeScript, Tailwind CSS, and Vite. Users can create, view, edit, and delete invoices with support for status management, filtering, dark mode, and fully responsive layouts.
 
@@ -173,4 +173,4 @@ The project is deployed on Vercel. Pushing to the main branch triggers an automa
 
 ## Author
 
-Michael Philip
+Michael Philip -->
